@@ -1,0 +1,62 @@
+#!env python
+from colorthief import ColorThief
+import png
+import os
+import sys
+import math
+import png
+
+for f in sys.argv[1:]:
+    print( f )
+    colors = ColorThief( f )
+    palette =  colors.get_palette()
+    color = colors.get_color()
+
+    name = 'Palette_%s' % os.path.basename( f ) + '.png'
+
+    swatchPerLine = 5
+
+    swatchSize = 30
+    swatchPadding = 5
+
+    padding = 10
+
+    width = 2 * padding + ( swatchSize + swatchPadding ) * swatchPerLine - swatchPadding
+    height = 2 * padding + ( swatchSize + swatchPadding ) * int( math.ceil( len( palette ) / float( swatchPerLine ) ) + 1 ) - swatchPadding
+    length = width * height
+    print( width, height )
+
+    outBufLength = length * 3
+    outBuf = bytearray( outBufLength )
+
+    i = 0
+    while i < outBufLength:
+        outBuf[ i ] = 255
+        i += 1
+
+    def putSwatch( x, y, col ):
+        for _y in range( y, y + swatchSize ):
+            i = ( _y * width + x ) * 3
+            for _x in range( 0, swatchSize ):
+                outBuf[ i + 0 ] = col[ 0 ]
+                outBuf[ i + 1 ] = col[ 1 ]
+                outBuf[ i + 2 ] = col[ 2 ]
+                i += 3
+
+    for i in range( len( palette ) ):
+        x = i % swatchPerLine
+        y = i / swatchPerLine
+
+        _x = padding + ( swatchSize + swatchPadding ) * x
+        _y = padding + ( swatchSize + swatchPadding ) * ( y + 1 )
+        print( _x, _y, _x + 30, _y + 30  )
+
+        putSwatch( _x, _y, palette[i] )
+
+        i += 1
+    putSwatch( ( width - swatchSize ) / 2, padding, color )
+
+    outFile = open( name, 'wb' )
+    out = png.Writer( size = ( width, height ), bitdepth=8 )
+    out.write_array( outFile, outBuf )
+    outFile.close()
