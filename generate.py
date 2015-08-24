@@ -136,9 +136,7 @@ outputSections = ( 'abcdabcdjmadjmcb',
         'lsrkrslklklkrslk',
         'tutugftugutftugf',
         'rsrsrklslsrkadlk',
-        'gutftfgugfgfnqgf',
-        '0000000000lklklk',
-        '0000000000gfgfgf', )
+        'gutftfgugfgfnqgf', )
 
 output.save( 'out_minimal.png' )
 
